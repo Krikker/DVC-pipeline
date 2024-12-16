@@ -1,0 +1,94 @@
+schema: '2.0'
+stages:
+  preprocess:
+    cmd: python src/preprocessing.py
+    deps:
+    - path: data/raw/Iris.csv
+      hash: md5
+      md5: 717820ef0af287ff346c5cabfb4c612c
+      size: 5107
+    - path: src/preprocessing.py
+      hash: md5
+      md5: f316826d6a28da25c9841365fb375c7b
+      size: 977
+    outs:
+    - path: data/processed/X_test.csv
+      hash: md5
+      md5: a8aea0501f2a46cbc1c009b4189f620e
+      size: 3021
+    - path: data/processed/X_train.csv
+      hash: md5
+      md5: 51c8631cb22b50d2f4b247ecacd59b31
+      size: 11919
+    - path: data/processed/y_test.csv
+      hash: md5
+      md5: 7ff2895b21aac316972001fecf9c7a37
+      size: 99
+    - path: data/processed/y_train.csv
+      hash: md5
+      md5: 943c4b04524afc5fa0416cb8857af505
+      size: 369
+  visualize:
+    cmd: python src/visualization.py
+    deps:
+    - path: data/raw/Iris.csv
+      hash: md5
+      md5: 717820ef0af287ff346c5cabfb4c612c
+      size: 5107
+    - path: src/visualization.py
+      hash: md5
+      md5: 4628a41f53b818c31a1f6213f43eae2b
+      size: 616
+    outs:
+    - path: reports/heatmap.png
+      hash: md5
+      md5: d2a4ea19d670a661f7e1c8e408166f39
+      size: 33847
+    - path: reports/histograms.png
+      hash: md5
+      md5: 7a33e11fb991309eab0303dbc1ae8a3e
+      size: 40384
+    - path: reports/pairplot.png
+      hash: md5
+      md5: 08314278706d8c2be6c886443ccc0dfd
+      size: 425642
+  train_knn:
+    cmd: python src/train_knn.py
+    deps:
+    - path: data/processed/X_train.csv
+      hash: md5
+      md5: 51c8631cb22b50d2f4b247ecacd59b31
+      size: 11919
+    - path: data/processed/y_train.csv
+      hash: md5
+      md5: 943c4b04524afc5fa0416cb8857af505
+      size: 369
+    - path: src/train_knn.py
+      hash: md5
+      md5: d9bee2e66cbbc8be68414445d1f58996
+      size: 1360
+    outs:
+    - path: models/metrics.json
+      hash: md5
+      md5: e333075b7fa7bf366de8ae818cf74399
+      size: 1036
+  compare:
+    cmd: python src/compare_knn.py
+    deps:
+    - path: data/processed/X_test.csv
+      hash: md5
+      md5: a8aea0501f2a46cbc1c009b4189f620e
+      size: 3021
+    - path: data/processed/y_test.csv
+      hash: md5
+      md5: 7ff2895b21aac316972001fecf9c7a37
+      size: 99
+    - path: src/compare_knn.py
+      hash: md5
+      md5: 7569b5a65853a59fcb6e45863f0a6b24
+      size: 1123
+    outs:
+    - path: reports/comparison.txt
+      hash: md5
+      md5: 357646321ba7998a73d65af5bb2cdda2
+      size: 142
