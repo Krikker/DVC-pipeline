@@ -2,38 +2,74 @@ stages:
   visualize:
     cmd: python src/visualization.py
     deps:
-      - src/visualization.py
-      - data/raw/Iris.csv
+    - src/visualization.py
+    - data/raw/Iris.csv
     outs:
-      - reports/pairplot.png
-      - reports/heatmap.png
-      - reports/histograms.png
+    - reports/pairplot.png
+    - reports/heatmap.png
+    - reports/histograms.png
 
   preprocess:
     cmd: python src/preprocessing.py
     deps:
-      - src/preprocessing.py
-      - data/raw/Iris.csv
+    - src/preprocessing.py
+    - data/raw/Iris.csv
     outs:
-      - data/processed/X_train.csv
-      - data/processed/X_test.csv
-      - data/processed/y_train.csv
-      - data/processed/y_test.csv
+    - data/processed/X_train.csv
+    - data/processed/X_test.csv
+    - data/processed/y_train.csv
+    - data/processed/y_test.csv
 
   train_knn:
     cmd: python src/train_knn.py
     deps:
-      - src/train_knn.py
-      - data/processed/X_train.csv
-      - data/processed/y_train.csv
+    - src/train_knn.py
+    - data/processed/X_train.csv
+    - data/processed/y_train.csv
     outs:
-      - models/metrics.json
+    - models/metrics.json
+    - models/knn_brute.pkl
+    - models/knn_kdtree.pkl
 
   compare:
     cmd: python src/compare_knn.py
     deps:
-      - src/compare_knn.py
-      - data/processed/X_test.csv
-      - data/processed/y_test.csv
+    - src/compare_knn.py
+    - data/processed/X_test.csv
+    - data/processed/y_test.csv
     outs:
-      - reports/comparison.txt
+    - reports/comparison.txt
+
+  evaluate:
+    cmd: python src/evaluate.py models/knn_brute.pkl models/knn_kdtree.pkl data/processed
+    deps:
+    - src/evaluate.py
+    - models/knn_brute.pkl
+    - models/knn_kdtree.pkl
+    - data/processed
+    outs:
+    - eval
+
+metrics:
+  - eval/knn_brute/metrics.json
+  - eval/knn_kdtree/metrics.json
+
+plots:
+  - ROC:
+      template: simple
+      x: fpr
+      y:
+        eval/knn_brute/roc.json: tpr
+        eval/knn_kdtree/roc.json: tpr
+  - Confusion-Matrix:
+      template: confusion
+      x: actual
+      y:
+        eval/knn_brute/cm.json: predicted
+        eval/knn_kdtree/cm.json: predicted
+  - Precision-Recall:
+      template: simple
+      x: recall
+      y:
+        eval/knn_brute/prc.json: precision
+        eval/knn_kdtree/prc.json: precision

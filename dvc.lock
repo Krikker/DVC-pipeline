@@ -9,8 +9,8 @@ stages:
       size: 5107
     - path: src/preprocessing.py
       hash: md5
-      md5: f316826d6a28da25c9841365fb375c7b
-      size: 977
+      md5: 506e639ac5b665d774ecd5efb626ab16
+      size: 1003
     outs:
     - path: data/processed/X_test.csv
       hash: md5
@@ -65,9 +65,17 @@ stages:
       size: 369
     - path: src/train_knn.py
       hash: md5
-      md5: d9bee2e66cbbc8be68414445d1f58996
-      size: 1360
+      md5: 83e2080a4e26838c1438d659d143b5d0
+      size: 1627
     outs:
+    - path: models/knn_brute.pkl
+      hash: md5
+      md5: f431f012324bd2f2fbf46ce1bb36e0ad
+      size: 6947
+    - path: models/knn_kdtree.pkl
+      hash: md5
+      md5: bf634672e8844c51bb1bc298a8894f8d
+      size: 13654
     - path: models/metrics.json
       hash: md5
       md5: e333075b7fa7bf366de8ae818cf74399
@@ -92,3 +100,59 @@ stages:
       hash: md5
       md5: 357646321ba7998a73d65af5bb2cdda2
       size: 142
+  evaluate:
+    cmd: python src/evaluate.py models/knn_brute.pkl models/knn_kdtree.pkl data/processed
+    deps:
+    - path: data/processed
+      hash: md5
+      md5: 821e5b0f900b293efdb16a9bc932d875.dir
+      size: 15462
+      nfiles: 5
+    - path: models/knn_brute.pkl
+      hash: md5
+      md5: f431f012324bd2f2fbf46ce1bb36e0ad
+      size: 6947
+    - path: models/knn_kdtree.pkl
+      hash: md5
+      md5: bf634672e8844c51bb1bc298a8894f8d
+      size: 13654
+    - path: src/evaluate.py
+      hash: md5
+      md5: 935ed467c71bda9d0b0e7a6a06e96f2b
+      size: 3983
+    outs:
+    - path: eval
+      hash: md5
+      md5: 7476b4fda7648b1c08b781c9a29bacfb.dir
+      size: 526
+      nfiles: 12
+  metrics:
+    cmd: dvc metrics show
+    deps:
+    - path: eval/knn_brute/metrics.json
+      hash: md5
+      md5: 981f99a06d3d77afd3bbdfc718f21874
+      size: 53
+    - path: eval/knn_kdtree/metrics.json
+      hash: md5
+      md5: 981f99a06d3d77afd3bbdfc718f21874
+      size: 53
+  plots:
+    cmd: dvc plots show
+    deps:
+    - path: eval/knn_brute/prc.json
+      hash: md5
+      md5: 01f95be94653a23c89593b52a16820fb
+      size: 57
+    - path: eval/knn_brute/roc.json
+      hash: md5
+      md5: 1083dd6db4ed818197d291c9fefe2537
+      size: 48
+    - path: eval/knn_kdtree/prc.json
+      hash: md5
+      md5: 01f95be94653a23c89593b52a16820fb
+      size: 57
+    - path: eval/knn_kdtree/roc.json
+      hash: md5
+      md5: 1083dd6db4ed818197d291c9fefe2537
+      size: 48
